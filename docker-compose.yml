@@ -1,0 +1,32 @@
+services:
+  be-user-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+    container_name: be-user-service
+    ports:
+      - "8000:8000"
+    restart: always
+
+    networks:
+      - user-service
+
+
+  db-user-service:
+    image: postgres:latest
+    container_name: db-user-service
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - "pg_data:/usr/lib/postgres/data"
+    networks:
+      - user-service
+
+volumes:
+  pg_data: { }
+
+
+networks:
+  user-service: { }
