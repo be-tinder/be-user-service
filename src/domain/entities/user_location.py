@@ -4,7 +4,8 @@ from src.domain.interfaces.entity import BaseDTO
 
 
 @dataclass
-class UserImageDTO(BaseDTO["UserImage"]):
+class UserLocationDTO(BaseDTO["UserLocation"]):
     id: int = None
-    image_path: str = None
+    latitude: float = None
+    longitude: float = None
     user_id: int = None

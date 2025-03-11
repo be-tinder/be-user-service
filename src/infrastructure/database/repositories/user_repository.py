@@ -48,3 +48,9 @@ class UserRepository(IUserRepository):
         result = await self._session.execute(stmt)
         users = result.scalars().all()
         return [UserDTO.from_orm(user) for user in users]
+
+    async def get_user_by_number(self, phone_number: str) -> Optional[UserDTO]:
+        stmt = select(User).where(User.phone_number == phone_number)
+        result = await self._session.execute(stmt)
+        user = result.scalar_one_or_none()
+        return UserDTO.from_orm(user) if user else None
