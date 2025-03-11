@@ -15,11 +15,17 @@ class User(alchemy_config.Base, mixins.TimeStampMixin):
     name: orm.Mapped[str] = orm.mapped_column(sa.String, index=True)
     phone_number: orm.Mapped[str] = orm.mapped_column(sa.String, unique=True, index=True)
     email: orm.Mapped[str] = orm.mapped_column(sa.String, unique=True, index=True)
-    gender: orm.Mapped[str] = orm.mapped_column(sa.Enum(enums.Gender.NOT_SPECIFIED, native_enum=False), index=True)
+    gender: orm.Mapped[str] = orm.mapped_column(
+        sa.Enum(
+            enums.Gender,
+            native_enum=False
+        ),
+        default=enums.Gender.NOT_SPECIFIED,
+        index=True
+    )
     sexual_orientation: orm.Mapped[str] = orm.mapped_column(sa.String, index=True)
     birth_date: orm.Mapped[datetime.date] = orm.mapped_column(sa.Date)
 
-    interests = orm.relationship("UserInterested", back_populates="user", uselist=True, cascade="all, delete-orphans")
-    photos = orm.relationship("UserImage", back_populates="user", cascade="all, delete-orphans")
-    user_location = orm.relationship("UserLocation", back_populates="user", uselist=False,
-                                     cascade="all, delete-orphans")
+    interests = orm.relationship("UserInterested", back_populates="user", uselist=True)
+    photos = orm.relationship("UserImage", back_populates="user")
+    user_location = orm.relationship("UserLocation", back_populates="user", uselist=False)
