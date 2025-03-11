@@ -9,6 +9,6 @@ class UserImage(alchemy_config.Base):
 
     id: orm.Mapped[int] = orm.mapped_column(sa.Integer, primary_key=True, index=True)
     image_path: orm.Mapped[str] = orm.mapped_column(sa.String)
-    user_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("db_users.id"))
+    user_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("db_users.id", ondelete="CASCADE"))
 
     user = orm.relationship("User", back_populates="photos", cascade="all, delete-orphan", uselist=False)
