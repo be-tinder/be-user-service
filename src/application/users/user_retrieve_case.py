@@ -1,17 +1,13 @@
-from typing import Dict, Any
+from typing import Dict
 
-from src.domain.interfaces.use_case import IBaseUseCase
 from src.domain.repositories.iuser_repository import IUserRepository
 
 
-class UserRetrieveUseCase(IBaseUseCase):
-    __for_service__ = "user_retrieve"
-
+class UserRetrieveUseCase:
     def __init__(self, user_repository: IUserRepository, **kwargs):
-        super().__init__(user_repository, **kwargs)
         self._user_repository = user_repository
 
-    async def execute(self, user_id: int) -> Dict[str, Any]:
+    async def execute(self, user_id: int):
         """Retrieve a user by ID.
 
         Args:
