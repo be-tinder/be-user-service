@@ -5,13 +5,6 @@ T = TypeVar("T")
 
 
 class IRepository(ABC, Generic[T]):
-    _subclasses: Dict[str, Type["IRepository"]] = {}
-
-    def __init_subclass__(cls, **kwargs):
-        """Automatically registers subclasses when they are defined."""
-        super().__init_subclass__(**kwargs)
-        IRepository._subclasses[cls.__name__] = cls
-
     @abstractmethod
     async def get_by_id(self, id: int) -> Optional[T]:
         """Retrieve a single entity by its identifier."""

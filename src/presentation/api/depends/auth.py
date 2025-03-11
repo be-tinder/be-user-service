@@ -1,12 +1,12 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, HTTPException, status
-from fastapi.security.oauth2 import OAuth2PasswordBearer
+from fastapi.security.http import HTTPBearer
 
 from src.container import AppContainer
 from src.domain.entities.user import UserDTO
 from src.domain.interfaces.jwt_service import IJWTService
 
-token_auth = OAuth2PasswordBearer(tokenUrl="/api/token")
+token_auth = HTTPBearer()
 
 
 @inject

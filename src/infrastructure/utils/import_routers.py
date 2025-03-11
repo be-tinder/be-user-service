@@ -1,11 +1,10 @@
 import importlib
 import pkgutil
-from typing import List
-
+from typing import List, Dict, Any
 from fastapi import APIRouter
 
 
-def _is_api_router(module_name: str) -> bool:
+def _is_api_router(module_name: str) -> APIRouter | None:
     """
     Check if the module specified by `module_name` has a 'router'
     attribute that is an instance of FastAPI's APIRouter.
@@ -14,16 +13,14 @@ def _is_api_router(module_name: str) -> bool:
         module_name (str): The full dotted module name to check.
 
     Returns:
-        bool: True if the module contains an APIRouter instance under
-              the attribute 'router'; otherwise, False.
+        APIRouter | None: The APIRouter instance if found; otherwise, None.
     """
     try:
         module = importlib.import_module(module_name)
-    except Exception:
-        return False
-
-    router = getattr(module, "router", None)
-    return isinstance(router, APIRouter)
+        router = getattr(module, "router", None)
+        return router if isinstance(router, APIRouter) else None
+    except (ModuleNotFoundError, ImportError, AttributeError):
+        return None
 
 
 def _deep_import(path: str) -> List[str]:
@@ -40,28 +37,35 @@ def _deep_import(path: str) -> List[str]:
     modules = []
     try:
         package = importlib.import_module(path)
+        if hasattr(package, "__path__"):
+            for _, module_name, ispkg in pkgutil.walk_packages(
+                package.__path__, prefix=path + "."
+            ):
+                modules.append(module_name)
+                if ispkg:
+                    modules.extend(_deep_import(module_name))
     except ModuleNotFoundError:
-        return modules
+        return []
 
-    modules.append(path)
-    if hasattr(package, "__path__"):
-        for _, module_name, ispkg in pkgutil.walk_packages(package.__path__, prefix=path + "."):
-            modules.append(module_name)
-            if ispkg:
-                modules.extend(_deep_import(module_name))
-    return list(set(modules))
+    return list(set(modules))  # Remove potential duplicates
 
 
-def import_api_routers(root_path: str) -> List[str]:
+def import_api_routers(root_path: str) -> List[Dict[str, Any]]:
     """
-    Discover and return all module names under `root_path` that define
-    an APIRouter instance (assigned to the attribute 'router').
+    Discover and return all APIRouter instances under `root_path`.
 
     Args:
         root_path (str): The base package path to search for API routers.
 
     Returns:
-        List[str]: A list of module names containing an APIRouter.
+        List[Dict[str, Any]]: A list of dictionaries containing APIRouter instances and module names.
     """
     all_modules = _deep_import(root_path)
-    return [module for module in all_modules if _is_api_router(module)]
+    routers = []
+
+    for module_name in all_modules:
+        router = _is_api_router(module_name)
+        if router:
+            routers.append({"router": router, "module": module_name.split(".")[-1]})
+
+    return routers
