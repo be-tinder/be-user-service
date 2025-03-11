@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Optional
 
@@ -10,12 +10,12 @@ from src.domain.interfaces.entity import BaseDTO
 class UserDTO(BaseDTO["User"]):
     """DTO for User model."""
     id: Optional[int] = None
-    name: str = ""
-    phone_number: str = ""
-    email: str = ""
-    gender: enums.Gender = field(default_factory=lambda: enums.Gender.NOT_SPECIFIED)
-    sexual_orientation: str = ""
-    birth_date: date = field(default_factory=date.today)
+    name: str = None
+    phone_number: str = None
+    email: str = None
+    gender: enums.Gender = None
+    sexual_orientation: str = None
+    birth_date: date = None
     create_date: Optional[datetime] = None
     update_date: Optional[datetime] = None
 

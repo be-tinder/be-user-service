@@ -1,12 +1,11 @@
-from typing import Optional
-
-from src.domain.entities.user import UserDTO
-from src.domain.interfaces.base_schema import BaseResponseSchema
+from pydantic import BaseModel
 
 
-class UserResponseSchema(BaseResponseSchema):
-    data: Optional[UserDTO]
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
 
 
-class AuthResponseSchema(BaseResponseSchema):
-    data: Optional[dict]
+class LoginSchema(BaseModel):
+    phone_number: str
+
