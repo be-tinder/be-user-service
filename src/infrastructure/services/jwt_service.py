@@ -12,6 +12,7 @@ class JWTService(IJWTService):
             "user_id": user_id,
         }
         key = self.config.JWT_ACCESS_TOKEN
+        print(key)
         if is_refresh:
             key = self.config.JWT_ACCESS_TOKEN
         return jwt.encode(payload=payload, key=key, algorithm="HS256")

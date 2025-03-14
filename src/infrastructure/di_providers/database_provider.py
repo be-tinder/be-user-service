@@ -3,7 +3,10 @@ from typing import AsyncIterable
 from dishka import Provider, provide, Scope
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
+from src.domain.interfaces.redis import RedisGateway
 from src.domain.interfaces.uow import IUoW
+from src.infrastructure.cache.redis_client import RedisClient
+from src.infrastructure.cache.redis_manager import RedisManager
 from src.infrastructure.config import Settings
 from src.infrastructure.database.alchemy_config import create_engine, create_session
 from src.infrastructure.database.uow import UoW
@@ -37,3 +40,11 @@ class DatabaseIoc(Provider):
     @provide(scope=Scope.REQUEST)
     async def get_uow(self, session: AsyncSession) -> IUoW:
         return UoW(session)
+
+    @provide(scope=Scope.APP)
+    async def get_redis_client(self, settings: Settings) -> RedisClient:
+        return RedisClient(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
+
+    @provide(scope=Scope.REQUEST)
+    async def get_redis_manager(self, redis: RedisClient) -> RedisGateway:
+        return RedisManager(redis.get_client())

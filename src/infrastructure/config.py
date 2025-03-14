@@ -4,6 +4,8 @@ from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+APP_DEBUG = True
+
 
 class Settings(BaseSettings):
     POSTGRES_USER: str
@@ -11,6 +13,13 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_HOST: str
     POSTGRES_PORT: str
+
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_DB: int
+
+    JWT_ACCESS_TOKEN: str
+    JWT_REFRESH_TOKEN: str
 
     @property
     def async_db_url(self) -> str:

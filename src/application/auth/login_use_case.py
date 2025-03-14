@@ -1,28 +1,46 @@
-from fastapi import HTTPException
+from dataclasses import dataclass
 
-from src.domain.entities.user import UserDTO
+from src.application._common.user_gateway import UserReader
+from src.domain.exceptions import AuthError
+from src.domain.interfaces.redis import RedisGateway
 from src.domain.interfaces.security import IJWTService
-from src.domain.repositories.iuser_repository import IUserRepository
+
+
+class UserDaoGateway(UserReader):
+    pass
+
+
+@dataclass
+class LoginDTO:
+    phone_number: str
+    otp_code: str
 
 
 class LoginUseCase:
     def __init__(
             self,
-            user_repository: IUserRepository,
+            user_dao: UserDaoGateway,
+            redis: RedisGateway,
             jwt_service: IJWTService,
     ):
-        self.user_repository = user_repository
-        self.jwt_service = jwt_service
+        self._jwt_service = jwt_service
+        self._user_dao = user_dao
+        self._redis = redis
 
-    async def execute(self, user: UserDTO):
-        db_user = await self.user_repository.get_by_id(user.id)
+    async def __call__(self, login_form: LoginDTO, *args, **kwargs):
+        db_user = await self._user_dao.get_user_by_phone_number(login_form.phone_number)
         if not db_user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise AuthError("User not found")
 
-        access_token = self.jwt_service.encode_jwt(user_id=db_user.id, is_refresh=False)
-        refresh_token = self.jwt_service.encode_jwt(user_id=db_user.id, is_refresh=True)
+        stored_otp = await self._redis.get(login_form.otp_code)
+
+        if not stored_otp:
+            raise AuthError("OTP code not found")
+
+        access_token = self._jwt_service.encode_jwt(db_user.id, is_refresh=False)
+        refresh_token = self._jwt_service.encode_jwt(db_user.id, is_refresh=True)
 
         return {
-            'access_token': access_token,
-            'refresh_token': refresh_token,
+            "access_token": access_token,
+            "refresh_token": refresh_token,
         }

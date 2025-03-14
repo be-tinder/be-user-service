@@ -2,7 +2,7 @@ from dishka import Provider, provide, Scope
 
 from src.domain.interfaces.security import IJWTService
 from src.infrastructure.config import Settings
-from src.infrastructure.utils.security import JWTService
+from src.infrastructure.services.jwt_service import JWTService
 
 
 class ServiceProvider(Provider):

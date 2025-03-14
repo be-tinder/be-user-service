@@ -8,4 +8,8 @@ class Token(BaseModel):
 
 class LoginSchema(BaseModel):
     phone_number: str
+    otp_code: str
 
+
+class SendSmsSchema(BaseModel):
+    phone_number: str

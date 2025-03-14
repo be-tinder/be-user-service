@@ -11,10 +11,9 @@ from src.infrastructure.database import mixins
 class User(alchemy_config.Base, mixins.TimeStampMixin):
     __tablename__ = 'db_users'
 
-    id: orm.Mapped[int] = orm.mapped_column(sa.Integer, primary_key=True, index=True)
-    name: orm.Mapped[str] = orm.mapped_column(sa.String, index=True)
+    id: orm.Mapped[int] = orm.mapped_column(sa.Integer, primary_key=True)
+    name: orm.Mapped[str] = orm.mapped_column(sa.String, nullable=True)
     phone_number: orm.Mapped[str] = orm.mapped_column(sa.String, unique=True, index=True)
-    email: orm.Mapped[str] = orm.mapped_column(sa.String, unique=True, index=True)
     gender: orm.Mapped[str] = orm.mapped_column(
         sa.Enum(
             enums.Gender,
@@ -23,8 +22,8 @@ class User(alchemy_config.Base, mixins.TimeStampMixin):
         default=enums.Gender.NOT_SPECIFIED,
         index=True
     )
-    sexual_orientation: orm.Mapped[str] = orm.mapped_column(sa.String, index=True)
-    birth_date: orm.Mapped[datetime.date] = orm.mapped_column(sa.Date)
+    sexual_orientation: orm.Mapped[str] = orm.mapped_column(sa.String, nullable=True, index=True)
+    birth_date: orm.Mapped[datetime.date] = orm.mapped_column(sa.Date, nullable=True)
 
     interests = orm.relationship("UserInterested", back_populates="user", uselist=True)
     photos = orm.relationship("UserImage", back_populates="user")

@@ -12,7 +12,6 @@ class UserDTO(BaseDTO["User"]):
     id: Optional[int] = None
     name: str = None
     phone_number: str = None
-    email: str = None
     gender: enums.Gender = None
     sexual_orientation: str = None
     birth_date: date = None

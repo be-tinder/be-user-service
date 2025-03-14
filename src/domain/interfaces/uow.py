@@ -2,8 +2,8 @@ from abc import ABC
 
 
 class IUoW(ABC):
-    def commit(self):
+    async def commit(self):
         pass
 
-    def rollback(self):
+    async def rollback(self):
         pass
