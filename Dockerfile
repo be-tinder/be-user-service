@@ -1,19 +1,21 @@
-FROM python:3.11-slim
-
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+FROM python:3.11
 
 WORKDIR /app
 
-RUN apt update && apt upgrade -y && apt install -y poetry
+RUN apt-get update && pip install poetry
 
-COPY pyproject.toml poetry.lock* ./
+COPY pyproject.toml poetry.lock ./
 
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi
+
+RUN pip install --upgrade pip poetry \
+    && poetry config virtualenvs.create false \
+    && poetry install --no-root
+
 
 COPY . .
 
+RUN chmod +x start.sh
+
 EXPOSE 8000
 
-RUN ["uvicorn", " src", "main:app", "--reload"]
+CMD ["bash", "start.sh"]

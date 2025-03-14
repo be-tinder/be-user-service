@@ -21,7 +21,7 @@ def init_app():
 
     init_routers(app)
     handle_errors(app)
-    init_middlewares(app, container)
+    # init_middlewares(app, container)
 
     return app
 

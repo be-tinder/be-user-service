@@ -3,12 +3,14 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-
+    depends_on:
+      - db-user-service
+    env_file:
+      - .env
     container_name: be-user-service
     ports:
       - "8000:8000"
     restart: always
-
     networks:
       - user-service
 
@@ -19,8 +21,18 @@ services:
     ports:
       - "5432:5432"
     restart: always
+    env_file:
+      - .env
     volumes:
       - "pg_data:/usr/lib/postgres/data"
+    networks:
+      - user-service
+
+  redis-user-service:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
     networks:
       - user-service
 
