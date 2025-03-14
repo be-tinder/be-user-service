@@ -1,0 +1,14 @@
+name: "Test my project"
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  test_app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Previus test"
+        run: |
+          echo 'Hello world'
