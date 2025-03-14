@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-RUN pip install poetry
+RUN apt update && apt upgrade -y && apt install -y poetry
 
 COPY pyproject.toml poetry.lock* ./
 
@@ -15,3 +15,5 @@ RUN poetry config virtualenvs.create false \
 COPY . .
 
 EXPOSE 8000
+
+RUN ["uvicorn", " src", "main:app", "--reload"]
